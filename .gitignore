@@ -1,0 +1,23 @@
+# .NET Core
+bin/
+obj/
+*.user
+*.userosscache
+*.suo
+*.userprefs
+*.db
+*.sqlite
+
+# Visual Studio
+.vs/
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+
+# Azure
+*.publishsettings
+*.azurePubxml
+*.pubxml
+*.publishproj 
