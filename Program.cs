@@ -10,7 +10,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<StudentDBContext>(options =>
 {
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-    options.EnableSensitiveDataLogging();
 });
 
 var app = builder.Build();
@@ -21,6 +20,10 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
@@ -40,7 +43,6 @@ using (var scope = app.Services.CreateScope())
     try
     {
         var context = services.GetRequiredService<StudentDBContext>();
-        context.Database.EnsureDeleted(); // Remove this line in production
         context.Database.EnsureCreated();
         
         // Seed initial data if needed
@@ -57,6 +59,14 @@ using (var scope = app.Services.CreateScope())
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while creating or seeding the database.");
+        if (!app.Environment.IsDevelopment())
+        {
+            // In production, redirect to a generic error page
+            app.Run(async context =>
+            {
+                context.Response.Redirect("/Home/Error");
+            });
+        }
     }
 }
 
